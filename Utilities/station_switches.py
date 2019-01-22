@@ -1,3 +1,17 @@
+#!/usr/bin/env python3
+"""
+station_switches.py
+
+Purpose: Programmatically generate a list of switch names.
+
+Author: Cody Jackson
+
+Date: 1/15/19
+################################
+Version 0.1
+    Initial build
+"""
+
 from string import ascii_lowercase
 
 switches = []

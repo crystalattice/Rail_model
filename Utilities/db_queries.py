@@ -1,3 +1,17 @@
+#!/usr/bin/env python3
+"""
+db_queries.py
+
+Purpose: Utility program to generate DB queries for testing, without adding extraneous code to actual program files.
+
+Author: Cody Jackson
+
+Date: 1/ 22/19
+################################
+Version 0.1
+    Initial build
+"""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from Database.create_database import Base, CurrentStatus, SwitchStatus, FutureStatus

@@ -1,5 +1,16 @@
-# import sys
-# sys.path.extend(["/home/cody/PycharmProjects/Transportation_model"])
+#!/usr/bin/env python3
+"""
+station_mapping.py
+
+Purpose: Determine switch positions based on current and future location of train car.
+
+Author: Cody Jackson
+
+Date: 1/18/19
+################################
+Version 0.1
+    Initial build
+"""
 
 from sqlalchemy import create_engine, update
 from sqlalchemy.orm import sessionmaker
@@ -17,7 +28,10 @@ session = DBSession()  # Create staging area
 
 
 def get_route_info(routing, sess):
-    # Assume 30mph and 30 miles between stations
+    """Update database with necessary switch positions, based on current and desired stations.
+
+    Assumes 30mph and 30 miles between stations.
+    """
     if routing == "route_1_2":
         sw_1b = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "1b").one()
         sw_1b.switch_position = False
@@ -107,17 +121,4 @@ def get_route_info(routing, sess):
 
 
 if __name__ == "__main__":
-    route = "route_4_3"
-    print(get_route_info(route, session))
-
-    # sw_1b = session.query(SwitchStatus).filter(SwitchStatus.switch_name == "1b").one()
-    # print(sw_1b.switch_position)
-    # sw_1b.switch_position = False
-    # print(sw_1b.switch_position)
-
-    # switched = session.query(SwitchStatus).filter(SwitchStatus.switch_name == "1b").all()
-    switched = session.query(SwitchStatus).all()
-    for switch in switched:
-        print(switch.switch_name)
-        print(switch.switch_status)
-        print(switch.switch_position)
+    pass

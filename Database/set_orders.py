@@ -1,3 +1,17 @@
+#!/usr/bin/env python3
+"""
+set_orders.py
+
+Purpose: Takes user input and updates the database accordingly
+
+Author: Cody Jackson
+
+Date: 1/15/19
+################################
+Version 0.1
+    Initial build
+"""
+
 import argparse
 import sys
 sys.path.extend(["/home/cody/PycharmProjects/Transportation_model"])
@@ -9,6 +23,7 @@ from create_database import Base, CurrentStatus, SwitchStatus, FutureStatus  # I
 
 
 def access_db():
+    """Establish connection to created database."""
     engine = create_engine(
         "sqlite:////home/cody/PycharmProjects/Transportation_model/transportation.db")  # Interact w/ DB file
     Base.metadata.bind = engine  # Bind engine to Base to access classes
@@ -20,6 +35,7 @@ def access_db():
 
 
 def arg_parser():
+    """Capture transportation orders from user."""
     parser = argparse.ArgumentParser(description="Get the transportation move order.")
     parser.add_argument("who", help="Engine or car identification. Options: 'Engine', 'Car 1', 'Car 2', 'Car 2'")
     parser.add_argument("where", help="Destination station. Option: 'Station 1', 'Station 2', 'Station 3, 'Station 4'")
@@ -31,6 +47,7 @@ def arg_parser():
 
 
 def create_orders(vehicle, destination, cargo, turbo, session):
+    """Stage updates to database based on user input."""
     route_time = get_route(vehicle, destination, session)
     move_car = session.query(FutureStatus).first()
     move_car.who = vehicle
@@ -44,6 +61,7 @@ def create_orders(vehicle, destination, cargo, turbo, session):
 
 
 def get_curr_location(vehicle, session):
+    """Determine the current location of the desired train car."""
     selected_car = session.query(CurrentStatus).filter(CurrentStatus.identification == vehicle).one()
     curr_loc = selected_car.location
 
@@ -51,6 +69,7 @@ def get_curr_location(vehicle, session):
 
 
 def get_route(vehicle, destination, session):
+    """Based on the current location and ordered location, determine the switch lineup required and ETA."""
     curr_location = get_curr_location(vehicle, session)
     new_loc = f"route_{curr_location[-1]}_{destination[-1]}"
     route = station_mapping.get_route_info(new_loc, session)
@@ -59,6 +78,7 @@ def get_route(vehicle, destination, session):
 
 
 def close_session(session, movement):
+    """Update the database with staged data."""
     session.add(movement)
     session.commit()
 

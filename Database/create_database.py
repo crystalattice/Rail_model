@@ -1,3 +1,22 @@
+#!/usr/bin/env python3
+"""
+create_database.py
+
+Purpose: Creates a transportation database and populates it with initial values
+
+Classes:
+    CurrentStatus: table for tracking the current data of transportation vehicle
+    SwitchStatus: table for tracking the data for routing switches
+    FutureStatus: table to hold user orders of transportation changes
+
+Author: Cody Jackson
+
+Date: 1/9/19
+################################
+Version 0.1
+    Initial build
+"""
+
 from sqlalchemy import Column, Integer, String, Boolean, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -6,6 +25,7 @@ Base = declarative_base()
 
 
 class CurrentStatus(Base):
+    """Table for tracking the current data of transportation vehicle"""
     __tablename__ = "current"
     id = Column(Integer, primary_key=True)
     identification = Column(String(length=250), nullable=False)  # Engine or car number
@@ -15,6 +35,7 @@ class CurrentStatus(Base):
 
 
 class SwitchStatus(Base):
+    """Table for tracking the data for routing switches"""
     __tablename__ = "switches"
     id = Column(Integer, primary_key=True)
     switch_name = Column(String(length=50), nullable=False)
@@ -23,6 +44,7 @@ class SwitchStatus(Base):
 
 
 class FutureStatus(Base):
+    """Table to hold user orders of transportation changes"""
     __tablename__ = "orders"
     id = Column(Integer, primary_key=True)
     who = Column(String(length=250), nullable=False)  # Engine or car number
@@ -43,7 +65,7 @@ session = DBSession()  # Create staging area
 
 
 def initial_db_fill():
-    # Populate database
+    """Populates the newly created database with initial system data."""
     # Switches
     _1a = SwitchStatus(switch_name="1a", switch_status=True, switch_position=True)
     _1b = SwitchStatus(switch_name="1b", switch_status=True, switch_position=True)

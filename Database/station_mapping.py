@@ -27,48 +27,81 @@ def get_route_info(routing, sess):
         sw_2a.switch_position = False
         time = 1
     elif routing == "route_1_3":
-        change_switches = update(SwitchStatus).values(switch_position=False).where(SwitchStatus.switch_name == "1b"
-                                                                                   and SwitchStatus.switch_name == "3a")
+        sw_1b = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "1b").one()
+        sw_1b.switch_position = False
+
+        sw_3a = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "3a").one()
+        sw_3a.switch_position = False
         time = 2
     elif routing == "route_1_4":
-        change_switches = update(SwitchStatus).values(switch_position=False).where(SwitchStatus.switch_name == "1b"
-                                                                                   and SwitchStatus.switch_name == "4a")
+        sw_1b = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "1b").one()
+        sw_1b.switch_position = False
+
+        sw_4a = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "4a").one()
+        sw_4a.switch_position = False
         time = 3
     elif routing == "route_2_1":
-        change_switches = update(SwitchStatus).values(switch_position=False).where(SwitchStatus.switch_name == "1a"
-                                                                                   and SwitchStatus.switch_name == "2b")
+        sw_2b = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "2b").one()
+        sw_2b.switch_position = False
+
+        sw_1a = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "1a").one()
+        sw_1a.switch_position = False
         time = 3
     elif routing == "route_2_3":
-        change_switches = update(SwitchStatus).values(switch_position=False).where(SwitchStatus.switch_name == "3a"
-                                                                                   and SwitchStatus.switch_name == "2b")
+        sw_2b = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "2b").one()
+        sw_2b.switch_position = False
+
+        sw_3a = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "3a").one()
+        sw_3a.switch_position = False
         time = 1
     elif routing == "route_2_4":
-        change_switches = update(SwitchStatus).values(switch_position=False).where(SwitchStatus.switch_name == "4a"
-                                                                                   and SwitchStatus.switch_name == "2b")
+        sw_2b = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "2b").one()
+        sw_2b.switch_position = False
+
+        sw_4a = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "4a").one()
+        sw_4a.switch_position = False
         time = 3
     elif routing == "route_3_1":
-        change_switches = update(SwitchStatus).values(switch_position=False).where(SwitchStatus.switch_name == "1a"
-                                                                                   and SwitchStatus.switch_name == "3b")
+        sw_3b = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "3b").one()
+        sw_3b.switch_position = False
+
+        sw_1a = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "1a").one()
+        sw_1a.switch_position = False
         time = 2
     elif routing == "route_3_2":
-        change_switches = update(SwitchStatus).values(switch_position=False).where(SwitchStatus.switch_name == "2a"
-                                                                                   and SwitchStatus.switch_name == "3b")
+        sw_3b = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "3b").one()
+        sw_3b.switch_position = False
+
+        sw_2a = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "2a").one()
+        sw_2a.switch_position = False
         time = 3
     elif routing == "route_3_4":
-        change_switches = update(SwitchStatus).values(switch_position=False).where(SwitchStatus.switch_name == "4a"
-                                                                                   and SwitchStatus.switch_name == "3b")
+        sw_3b = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "3b").one()
+        sw_3b.switch_position = False
+
+        sw_4a = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "4a").one()
+        sw_4a.switch_position = False
         time = 1
     elif routing == "route_4_1":
-        change_switches = update(SwitchStatus).values(switch_position=False).where(SwitchStatus.switch_name == "1a"
-                                                                                   and SwitchStatus.switch_name == "4b")
+        sw_4b = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "4b").one()
+        sw_4b.switch_position = False
+
+        sw_1a = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "1a").one()
+        sw_1a.switch_position = False
         time = 1
     elif routing == "route_4_2":
-        change_switches = update(SwitchStatus).values(switch_position=False).where(SwitchStatus.switch_name == "2a"
-                                                                                   and SwitchStatus.switch_name == "4b")
+        sw_4b = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "4b").one()
+        sw_4b.switch_position = False
+
+        sw_2a = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "2a").one()
+        sw_2a.switch_position = False
         time = 2
     elif routing == "route_4_3":
-        change_switches = update(SwitchStatus).values(switch_position=False).where(SwitchStatus.switch_name == "3a"
-                                                                                   and SwitchStatus.switch_name == "4b")
+        sw_4b = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "4b").one()
+        sw_4b.switch_position = False
+
+        sw_3a = sess.query(SwitchStatus).filter(SwitchStatus.switch_name == "3a").one()
+        sw_3a.switch_position = False
         time = 3
 
     return time
@@ -76,20 +109,11 @@ def get_route_info(routing, sess):
     # items = (_1b, _2a)
 
     # session.add_all(items)
-    sess.commit()
+    # sess.commit()
 
 
 if __name__ == "__main__":
-    # Base = declarative_base()
-    #
-    # engine = create_engine(
-    #     "sqlite:////home/cody/PycharmProjects/Transportation_model/transportation.db")
-    # Base.metadata.bind = engine  # Bind engine to Base to access classes
-    #
-    # DBSession = sessionmaker(bind=engine)  # Establish comms with DB
-    # session = DBSession()  # Create staging area
-
-    route = "route_1_2"
+    route = "route_4_3"
     print(get_route_info(route, session))
 
     # sw_1b = session.query(SwitchStatus).filter(SwitchStatus.switch_name == "1b").one()
@@ -99,35 +123,7 @@ if __name__ == "__main__":
 
     # switched = session.query(SwitchStatus).filter(SwitchStatus.switch_name == "1b").all()
     switched = session.query(SwitchStatus).all()
-    # print(switched)
     for switch in switched:
         print(switch.switch_name)
         print(switch.switch_status)
         print(switch.switch_position)
-
-    # switched = session.query(SwitchStatus).all()
-    # print(switched)
-    # for switch in switched:
-    #     print(switch.switch_name)
-    #     print(switch.switch_status)
-    #     print(switch.switch_position)
-
-    # switched = session.query(SwitchStatus).filter(SwitchStatus.switch_name == "1a")
-    # print(switched.switch_name)
-    # print(switched.switch_status)
-    # print(switched.switch_position)
-
-    # switched = session.query(SwitchStatus).filter(SwitchStatus.switch_name == "1b")
-    # print(switched.switch_name)
-    # print(switched.switch_status)
-    # print(switched.switch_position)
-    #
-    # switched = session.query(SwitchStatus).filter(SwitchStatus.switch_name == "2a")
-    # print(switched.switch_name)
-    # print(switched.switch_status)
-    # print(switched.switch_position)
-    #
-    # switched = session.query(SwitchStatus).filter(SwitchStatus.switch_name == "2b")
-    # print(switched.switch_name)
-    # print(switched.switch_status)
-    # print(switched.switch_position)

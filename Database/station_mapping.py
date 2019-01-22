@@ -8,7 +8,6 @@ from create_database import CurrentStatus, SwitchStatus, FutureStatus  # Import 
 
 Base = declarative_base()
 
-
 engine = create_engine(
     "sqlite:////home/cody/PycharmProjects/Transportation_model/transportation.db")
 Base.metadata.bind = engine  # Bind engine to Base to access classes
@@ -105,11 +104,6 @@ def get_route_info(routing, sess):
         time = 3
 
     return time
-
-    # items = (_1b, _2a)
-
-    # session.add_all(items)
-    # sess.commit()
 
 
 if __name__ == "__main__":

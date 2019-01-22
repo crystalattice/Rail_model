@@ -22,6 +22,9 @@
         <list>
           <option value="Database.fill_db.station_switches" />
           <option value="Database.fill_db.create_database" />
+          <option value="Database.station_mapping.create_database" />
+          <option value="Database.set_orders.create_database" />
+          <option value="Utilities.db_queries.create_database" />
         </list>
       </option>
     </inspection_tool>

@@ -31,10 +31,14 @@ def arg_parser():
 
 
 def create_orders(vehicle, destination, cargo, turbo, session):
-    route_map = get_route(vehicle, destination, session)
-    set_switches(route_map, session)
-
-    move_car = FutureStatus(who=vehicle, where=destination, how="", when=route_map["Time"], what=cargo, priority=turbo)
+    route_time = get_route(vehicle, destination, session)
+    move_car = session.query(FutureStatus).first()
+    move_car.who = vehicle
+    move_car.where = destination
+    move_car.what = cargo
+    move_car.how = ""
+    move_car.when = route_time
+    move_car.priority = turbo
 
     return move_car
 
@@ -49,13 +53,9 @@ def get_curr_location(vehicle, session):
 def get_route(vehicle, destination, session):
     curr_location = get_curr_location(vehicle, session)
     new_loc = f"route_{curr_location[-1]}_{destination[-1]}"
-    route = station_mapping.get_route_info(new_loc)
+    route = station_mapping.get_route_info(new_loc, session)
 
     return route
-
-
-def set_switches(routing, session):
-    session.add(SwitchStatus(**routing))
 
 
 def close_session(session, movement):
@@ -72,6 +72,7 @@ if __name__ == "__main__":
 
     db_access = access_db()
     move_train = create_orders(who, where, what, priority, db_access)
-    print(move_train)
 
     close_session(db_access, move_train)
+
+

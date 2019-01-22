@@ -1,23 +1,16 @@
 import argparse
+import sys
+sys.path.extend(["/home/cody/PycharmProjects/Transportation_model"])
+from Database import station_mapping
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from create_database import Base, CurrentStatus, SwitchStatus, FutureStatus  # Import tables from database creation
 
 
-def arg_parser():
-    parser = argparse.ArgumentParser(description="Get the transportation move order.")
-    parser.add_argument("who", help="Engine or car identification")
-    parser.add_argument("where", help="Destination")
-    parser.add_argument("what", default="N/A", help="Cargo description")
-    parser.add_argument("priority", default=False, type=bool, help="Rush delivery. Default = False")
-    var_args = vars(parser.parse_args())
-
-    return var_args
-
-
 def access_db():
-    engine = create_engine("sqlite:///transportation.db")  # Create DB engine
+    engine = create_engine(
+        "sqlite:////home/cody/PycharmProjects/Transportation_model/transportation.db")  # Interact w/ DB file
     Base.metadata.bind = engine  # Bind engine to Base to access classes
 
     db_session = sessionmaker(bind=engine)  # Establish comms with DB
@@ -26,13 +19,47 @@ def access_db():
     return session
 
 
-# TODO: get route information and ETA from station_mapping.py
-def create_orders(vehicle, destination, cargo, turbo):
-    move_car = FutureStatus(who=vehicle, where=destination, how="", when=0, what=cargo, priority=turbo)
+def arg_parser():
+    parser = argparse.ArgumentParser(description="Get the transportation move order.")
+    parser.add_argument("who", help="Engine or car identification. Options: 'Engine', 'Car 1', 'Car 2', 'Car 2'")
+    parser.add_argument("where", help="Destination station. Option: 'Station 1', 'Station 2', 'Station 3, 'Station 4'")
+    parser.add_argument("--what", default="N/A", help="Cargo description")
+    parser.add_argument("--priority", default=False, type=bool, help="Rush delivery. Default = False")
+    var_args = vars(parser.parse_args())
+
+    return var_args
 
 
-def close_session(session):
-    session.add_all(items)
+def create_orders(vehicle, destination, cargo, turbo, session):
+    route_map = get_route(vehicle, destination, session)
+    set_switches(route_map, session)
+
+    move_car = FutureStatus(who=vehicle, where=destination, how="", when=route_map["Time"], what=cargo, priority=turbo)
+
+    return move_car
+
+
+def get_curr_location(vehicle, session):
+    selected_car = session.query(CurrentStatus).filter(CurrentStatus.identification == vehicle).one()
+    curr_loc = selected_car.location
+
+    return curr_loc
+
+
+def get_route(vehicle, destination, session):
+    curr_location = get_curr_location(vehicle, session)
+    new_loc = f"route_{curr_location[-1]}_{destination[-1]}"
+    route = station_mapping.get_route_info(new_loc)
+
+    return route
+
+
+def set_switches(routing, session):
+    session.add(SwitchStatus(**routing))
+
+
+def close_session(session, movement):
+    session.add(movement)
     session.commit()
 
 
@@ -44,6 +71,7 @@ if __name__ == "__main__":
     priority = user_args["priority"]
 
     db_access = access_db()
-    create_orders(who, where, what, priority)
+    move_train = create_orders(who, where, what, priority, db_access)
+    print(move_train)
 
-    close_session(db_access)
+    close_session(db_access, move_train)

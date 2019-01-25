@@ -11,11 +11,10 @@ Date: 1/18/19
 Version 0.1
     Initial build
 """
-
-from sqlalchemy import create_engine, update
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from create_database import CurrentStatus, SwitchStatus, FutureStatus  # Import tables from database creation
+from Database.create_database import SwitchStatus
 
 Base = declarative_base()
 

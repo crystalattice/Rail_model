@@ -12,3 +12,5 @@ def test_engine_sta3(tmpdir):
     orders = sess.query(FutureStatus).one()
     assert orders.who == "Engine"
     assert orders.where == "Station 3"
+
+    set_orders.close_session(sess)

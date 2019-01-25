@@ -16,6 +16,7 @@ Date: 1/9/19
 Version 0.1
     Initial build
 """
+import os
 
 from sqlalchemy import Column, Integer, String, Boolean, create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -55,16 +56,19 @@ class FutureStatus(Base):
     priority = Column(Boolean)  # High priority = True, normal priority = False
 
 
-engine = create_engine(
-    "sqlite:////home/cody/PycharmProjects/Transportation_model/transportation.db")  # Interact w/ DB file
-Base.metadata.create_all(engine)  # Create the tables
-Base.metadata.bind = engine  # Bind engine to Base to access classes
+def create_db(path):
+    engine = create_engine(
+        "sqlite:///{}".format(path))  # Interact w/ DB file
+    Base.metadata.create_all(engine)  # Create the tables
+    Base.metadata.bind = engine  # Bind engine to Base to access classes
 
-DBSession = sessionmaker(bind=engine)  # Establish comms with DB
-session = DBSession()  # Create staging area
+    db_session = sessionmaker(bind=engine)  # Establish comms with DB
+    session = db_session()  # Create staging area
+
+    return session
 
 
-def initial_db_fill():
+def initial_db_fill(session):
     """Populates the newly created database with initial system data."""
     # Switches
     _1a = SwitchStatus(switch_name="1a", switch_status=True, switch_position=True)
@@ -92,5 +96,9 @@ def initial_db_fill():
 
 
 if __name__ == "__main__":
-    initial_db_fill()
+    db_path = input("Please provide the path for the database: ")
+    db_path = os.path.join(db_path)  # Cross-platform compatibility
 
+    sess = create_db(db_path)
+
+    initial_db_fill(sess)

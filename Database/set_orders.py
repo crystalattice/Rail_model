@@ -77,10 +77,15 @@ def get_route(vehicle, destination, session):
     return route
 
 
-def close_session(session, movement):
+def commit_session(session, movement):
     """Update the database with staged data."""
     session.add(movement)
     session.commit()
+
+
+def close_session(session):
+    """Close connection to database."""
+    session.close()
 
 
 if __name__ == "__main__":
@@ -93,6 +98,7 @@ if __name__ == "__main__":
     db_access = access_db()
     move_train = create_orders(who, where, what, priority, db_access)
 
-    close_session(db_access, move_train)
-
-
+    commit_session(db_access, move_train)
+    user_close = input("Do you want to close the access to the database? [y/N]")
+    if user_close.lower() == "y":
+        close_session(db_access)

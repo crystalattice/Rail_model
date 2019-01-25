@@ -11,11 +11,12 @@ Date: 1/ 22/19
 Version 0.1
     Initial build
 """
+import sys
+sys.path.extend(["/home/cody/PycharmProjects/Transportation_model"])
 
+from Database.create_database import Base, CurrentStatus, SwitchStatus, FutureStatus
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from Database.create_database import Base, CurrentStatus, SwitchStatus, FutureStatus
-
 
 engine = create_engine(
     "sqlite:////home/cody/PycharmProjects/Transportation_model/transportation.db")  # Interact w/ DB file

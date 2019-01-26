@@ -27,7 +27,7 @@ def arg_parser():
     parser.add_argument("database", help="Path of database to use.")
     parser.add_argument("who", help="Engine or car identification. Options: 'Engine', 'Car 1', 'Car 2', 'Car 2'")
     parser.add_argument("where", help="Destination station. Option: 'Station 1', 'Station 2', 'Station 3, 'Station 4'")
-    parser.add_argument("--what", default="N/A", help="Cargo description")
+    parser.add_argument("--what", default="N/A", type=str, help="Cargo description")
     parser.add_argument("--priority", default=False, type=bool, help="Rush delivery. Default = False")
     var_args = vars(parser.parse_args())
 

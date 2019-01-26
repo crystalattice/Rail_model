@@ -78,3 +78,14 @@ def test_cargo_int(transportation_db):
 
     orders = transportation_db.query(FutureStatus).one()
     assert orders.what == "8"
+
+
+def test_engine_turbo(transportation_db):
+    """Test Engine to valid station with priority flag."""
+    set_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=True,
+                             session=transportation_db)
+
+    orders = transportation_db.query(FutureStatus).one()
+    assert orders.who == "Engine"
+    assert orders.where == "Station 3"
+    assert orders.priority == True

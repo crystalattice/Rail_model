@@ -97,6 +97,7 @@ def update_curr_location(session, orders):
 
 
 def clear_orders(session):
+    """Clear entries from FutureStatus table."""
     orders = session.query(FutureStatus).first()
     session.delete(orders)
     session.commit()

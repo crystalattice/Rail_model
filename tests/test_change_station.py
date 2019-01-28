@@ -1,6 +1,6 @@
 import pytest
 from sqlalchemy.orm.exc import NoResultFound
-from Database.create_database import FutureStatus
+from Database.create_database import FutureStatus, CurrentStatus
 from Database import create_database, set_orders
 
 
@@ -89,3 +89,25 @@ def test_engine_turbo(transportation_db):
     assert orders.who == "Engine"
     assert orders.where == "Station 3"
     assert orders.priority == True
+
+
+def test_current_status_update(transportation_db):
+    """Test CurrentStatus table is updated to new status after transportation orders made."""
+    new_orders = set_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False,
+                                          session=transportation_db)
+
+    set_orders.update_curr_location(transportation_db, new_orders)
+    new_status = transportation_db.query(CurrentStatus).filter(CurrentStatus.identification == new_orders.who).one()
+    assert new_status.identification == "Engine"
+    assert new_status.location == "Station 3"
+
+
+def test_orders_status_cleared(transportation_db):
+    """Test that future orders table is cleared after move performed."""
+    new_orders = set_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False,
+                                          session=transportation_db)
+
+    set_orders.update_curr_location(transportation_db, new_orders)
+    set_orders.clear_orders(transportation_db)
+    with pytest.raises(NoResultFound):
+        transportation_db.query(FutureStatus).one()

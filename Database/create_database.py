@@ -57,6 +57,7 @@ class FutureStatus(Base):
 
 
 def create_db(path):
+    """Create the database."""
     engine = create_engine(
         "sqlite:///{}".format(path))  # Interact w/ DB file
     Base.metadata.create_all(engine)  # Create the tables

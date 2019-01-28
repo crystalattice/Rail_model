@@ -13,6 +13,10 @@ Version 0.1
 """
 
 import argparse
+from time import sleep
+
+import sys
+sys.path.extend(["/home/cody/PycharmProjects/Transportation_model"])
 
 from Database import station_mapping
 from Database.create_database import Base, CurrentStatus, FutureStatus
@@ -24,7 +28,7 @@ from sqlalchemy.orm import sessionmaker
 def arg_parser():
     """Capture transportation orders from user."""
     parser = argparse.ArgumentParser(description="Get the transportation move order.")
-    parser.add_argument("database", help="Path of database to use.")
+    parser.add_argument("db_location", help="Path of database to use.")
     parser.add_argument("who", help="Engine or car identification. Options: 'Engine', 'Car 1', 'Car 2', 'Car 2'")
     parser.add_argument("where", help="Destination station. Option: 'Station 1', 'Station 2', 'Station 3, 'Station 4'")
     parser.add_argument("--what", default="N/A", type=str, help="Cargo description")
@@ -83,6 +87,21 @@ def commit_session(session, movement):
     session.commit()
 
 
+def update_curr_location(session, orders):
+    """After waiting for a period of time, update the current location based on orders."""
+    new_status = session.query(CurrentStatus).filter(CurrentStatus.identification == orders.who).one()
+    new_status.location = orders.where
+
+    session.add(new_status)
+    session.commit()
+
+
+def clear_orders(session):
+    orders = session.query(FutureStatus).first()
+    session.delete(orders)
+    session.commit()
+
+
 def close_session(session):
     """Close connection to database."""
     session.close()
@@ -90,7 +109,7 @@ def close_session(session):
 
 if __name__ == "__main__":
     user_args = arg_parser()
-    db_path = user_args["database"]
+    db_path = user_args["db_location"]
     who = user_args["who"]
     where = user_args["where"]
     what = user_args["what"]
@@ -98,6 +117,9 @@ if __name__ == "__main__":
 
     db_access = access_db(db_path)
     move_train = create_orders(who, where, what, priority, db_access)
+    sleep(5)
+    update_curr_location(db_access, move_train)
 
     commit_session(db_access, move_train)
+    clear_orders(db_access)
     close_session(db_access)

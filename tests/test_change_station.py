@@ -18,7 +18,7 @@ def transportation_db(tmpdir):
 
 def test_engine_sta3(transportation_db):
     """Test Engine to valid station."""
-    set_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False,
+    set_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False, speed=30,
                              session=transportation_db)
 
     orders = transportation_db.query(FutureStatus).one()
@@ -28,7 +28,7 @@ def test_engine_sta3(transportation_db):
 
 def test_car1_sta4(transportation_db):
     """Test car to valid station."""
-    set_orders.create_orders(vehicle="Car 1", destination="Station 4", cargo="Denim", turbo=False,
+    set_orders.create_orders(vehicle="Car 1", destination="Station 4", cargo="Denim", turbo=False, speed=30,
                              session=transportation_db)
 
     orders = transportation_db.query(FutureStatus).one()
@@ -40,41 +40,41 @@ def test_car1_sta4(transportation_db):
 def test_invalid_car(transportation_db):
     """Test invalid car to valid station."""
     with pytest.raises(NoResultFound):
-        set_orders.create_orders(vehicle="Car 6", destination="Station 2", cargo="N/A", turbo=False,
+        set_orders.create_orders(vehicle="Car 6", destination="Station 2", cargo="N/A", turbo=False, speed=30,
                                  session=transportation_db)
 
 
 def test_invalid_station(transportation_db):
     """Test valid car to invalid station."""
     with pytest.raises(UnboundLocalError):
-        set_orders.create_orders(vehicle="Car 1", destination="Station 6", cargo="N/A", turbo=False,
+        set_orders.create_orders(vehicle="Car 1", destination="Station 6", cargo="N/A", turbo=False, speed=30,
                                  session=transportation_db)
 
 
 def test_engine_invalid_station(transportation_db):
     """Test valid car to invalid station."""
     with pytest.raises(UnboundLocalError):
-        set_orders.create_orders(vehicle="Engine", destination="Station 6", cargo="N/A", turbo=False,
+        set_orders.create_orders(vehicle="Engine", destination="Station 6", cargo="N/A", turbo=False, speed=30,
                                  session=transportation_db)
 
 
 def test_vehicle_int(transportation_db):
     """Test vehicle entry passed as non-string."""
     with pytest.raises(NoResultFound):
-        set_orders.create_orders(vehicle=6, destination="Station 2", cargo="N/A", turbo=False,
+        set_orders.create_orders(vehicle=6, destination="Station 2", cargo="N/A", turbo=False, speed=30,
                                  session=transportation_db)
 
 
 def test_station_int(transportation_db):
     """Test station entry passed as non-string."""
     with pytest.raises(TypeError):
-        set_orders.create_orders(vehicle="Engine", destination=2, cargo="N/A", turbo=False,
+        set_orders.create_orders(vehicle="Engine", destination=2, cargo="N/A", turbo=False, speed=30,
                                  session=transportation_db)
 
 
 def test_cargo_int(transportation_db):
     """Test cargo entry passed as non-string. Arguments should be converted to string."""
-    set_orders.create_orders(vehicle="Car 1", destination="Station 4", cargo=8, turbo=False,
+    set_orders.create_orders(vehicle="Car 1", destination="Station 4", cargo=8, turbo=False, speed=30,
                              session=transportation_db)
 
     orders = transportation_db.query(FutureStatus).one()
@@ -83,18 +83,19 @@ def test_cargo_int(transportation_db):
 
 def test_engine_turbo(transportation_db):
     """Test Engine to valid station with priority flag."""
-    set_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=True,
+    set_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=True, speed=50,
                              session=transportation_db)
 
     orders = transportation_db.query(FutureStatus).one()
     assert orders.who == "Engine"
     assert orders.where == "Station 3"
     assert orders.priority == True
+    assert orders.speed_request == 50
 
 
 def test_current_status_update(transportation_db):
     """Test CurrentStatus table is updated to new status after transportation orders made."""
-    new_orders = set_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False,
+    new_orders = set_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False, speed=30,
                                           session=transportation_db)
 
     set_orders.update_curr_location(transportation_db, new_orders)
@@ -105,7 +106,7 @@ def test_current_status_update(transportation_db):
 
 def test_orders_status_cleared(transportation_db):
     """Test that future orders table is cleared after move performed."""
-    new_orders = set_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False,
+    new_orders = set_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False, speed=30,
                                           session=transportation_db)
 
     set_orders.update_curr_location(transportation_db, new_orders)

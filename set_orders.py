@@ -8,6 +8,8 @@ Author: Cody Jackson
 
 Date: 1/15/19
 ################################
+Version 0.2
+    Added orders speed request
 Version 0.1
     Initial build
 """
@@ -33,6 +35,7 @@ def arg_parser():
     parser.add_argument("where", help="Destination station. Option: 'Station 1', 'Station 2', 'Station 3, 'Station 4'")
     parser.add_argument("--what", default="N/A", type=str, help="Cargo description")
     parser.add_argument("--priority", default=False, type=bool, help="Rush delivery. Default = False")
+    parser.add_argument("--req_speed", default=30, type=int, help="Requested speed of the train.")
     var_args = vars(parser.parse_args())
 
     return var_args
@@ -50,7 +53,7 @@ def access_db(path):
     return session
 
 
-def create_orders(vehicle, destination, cargo, turbo, session):
+def create_orders(vehicle, destination, cargo, turbo, speed, session):
     """Stage updates to database based on user input."""
     route_time = get_route(vehicle, destination, session)
     move_car = session.query(FutureStatus).first()
@@ -60,6 +63,7 @@ def create_orders(vehicle, destination, cargo, turbo, session):
     move_car.how = ""
     move_car.when = route_time
     move_car.priority = turbo
+    move_car.speed_request = speed
 
     return move_car
 
@@ -86,11 +90,14 @@ def commit_session(session, movement):
     session.add(movement)
     session.commit()
 
+# TODO: make function to make current speed match future speed
+
 
 def update_curr_location(session, orders):
     """After waiting for a period of time, update the current location based on orders."""
     new_status = session.query(CurrentStatus).filter(CurrentStatus.identification == orders.who).one()
     new_status.location = orders.where
+# TODO: change current speed to zero once train arrives at station
 
     session.add(new_status)
     session.commit()
@@ -115,9 +122,10 @@ if __name__ == "__main__":
     where = user_args["where"]
     what = user_args["what"]
     priority = user_args["priority"]
+    req_speed = user_args["req_speed"]
 
     db_access = access_db(db_path)
-    move_train = create_orders(who, where, what, priority, db_access)
+    move_train = create_orders(who, where, what, priority, req_speed, db_access)
     sleep(5)
     update_curr_location(db_access, move_train)
 

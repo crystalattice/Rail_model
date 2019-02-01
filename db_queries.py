@@ -8,6 +8,8 @@ Author: Cody Jackson
 
 Date: 1/ 22/19
 ################################
+Version 0.2
+    Added orders speed request
 Version 0.1
     Initial build
 """
@@ -55,6 +57,7 @@ print("Ordered location: {}".format(orders.where))
 print("ETA: {}".format(orders.when))
 print("Cargo: {}".format(orders.what))
 print("Ordered priority: {}".format(orders.priority))
+print("Ordered speed: {}".format(orders.speed_request))
 
 print("*"*25)
 print("CURRENT STATUS AFTER MOVE")

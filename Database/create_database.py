@@ -13,6 +13,8 @@ Author: Cody Jackson
 
 Date: 1/9/19
 ################################
+Version 0.2
+    Added orders speed request
 Version 0.1
     Initial build
 """
@@ -54,6 +56,9 @@ class FutureStatus(Base):
     when = Column(Integer, nullable=False)  # ETA
     what = Column(String(length=250))  # Cargo description
     priority = Column(Boolean)  # High priority = True, normal priority = False
+    speed_request = Column(Integer)  # Requested speed to the train
+
+# TODO: account for speed restrictions on track
 
 
 def create_db(path):

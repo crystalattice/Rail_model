@@ -18,7 +18,7 @@ from time import sleep
 import sys
 sys.path.extend(["/home/cody/PycharmProjects/Transportation_model"])
 
-from Database import station_mapping
+import station_mapping
 from Database.create_database import Base, CurrentStatus, FutureStatus
 
 from sqlalchemy import create_engine

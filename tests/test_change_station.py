@@ -1,7 +1,8 @@
 import pytest
 from sqlalchemy.orm.exc import NoResultFound
 from Database.create_database import FutureStatus, CurrentStatus
-from Database import create_database, set_orders
+from Database import create_database
+import set_orders
 
 
 @pytest.fixture()

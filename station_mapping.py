@@ -16,15 +16,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from Database.create_database import SwitchStatus
 
-Base = declarative_base()
-
-engine = create_engine(
-    "sqlite:////home/cody/PycharmProjects/Transportation_model/transportation.db")
-Base.metadata.bind = engine  # Bind engine to Base to access classes
-
-DBSession = sessionmaker(bind=engine)  # Establish comms with DB
-session = DBSession()  # Create staging area
-
 
 def get_route_info(routing, sess):
     """Update database with necessary switch positions, based on current and desired stations.

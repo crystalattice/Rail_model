@@ -93,11 +93,19 @@ def test_engine_turbo(transportation_db):
     assert orders.speed_request == 50
 
 
+def test_match_speeds(transportation_db):
+    """Test current speed matches ordered speed."""
+    new_orders = set_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False, speed=45,
+                                          session=transportation_db)
+    set_orders.match_speeds(transportation_db, new_orders)
+    new_speed = transportation_db.query(CurrentStatus).filter(CurrentStatus.identification == new_orders.who).one()
+    assert new_speed.speed == 45
+
+
 def test_current_status_update(transportation_db):
     """Test CurrentStatus table is updated to new status after transportation orders made."""
     new_orders = set_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False, speed=30,
                                           session=transportation_db)
-
     set_orders.update_curr_location(transportation_db, new_orders)
     new_status = transportation_db.query(CurrentStatus).filter(CurrentStatus.identification == new_orders.who).one()
     assert new_status.identification == "Engine"

@@ -90,14 +90,22 @@ def commit_session(session, movement):
     session.add(movement)
     session.commit()
 
-# TODO: make function to make current speed match future speed
+
+def match_speeds(session, orders):
+    """Match the current speed to the ordered speed."""
+    car_status = session.query(CurrentStatus).filter(CurrentStatus.identification == orders.who).one()
+    car_status.speed = orders.speed_request
+    print(car_status.speed)
+
+    session.add(car_status)
+    session.commit()
 
 
 def update_curr_location(session, orders):
     """After waiting for a period of time, update the current location based on orders."""
     new_status = session.query(CurrentStatus).filter(CurrentStatus.identification == orders.who).one()
     new_status.location = orders.where
-# TODO: change current speed to zero once train arrives at station
+    new_status.speed = 0
 
     session.add(new_status)
     session.commit()
@@ -126,6 +134,7 @@ if __name__ == "__main__":
 
     db_access = access_db(db_path)
     move_train = create_orders(who, where, what, priority, req_speed, db_access)
+    match_speeds(db_access, move_train)
     sleep(5)
     update_curr_location(db_access, move_train)
 

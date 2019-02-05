@@ -17,7 +17,7 @@ import os
 import sys
 sys.path.extend(["/home/cody/PycharmProjects/Transportation_model"])
 
-from Database.create_database import Base, CurrentStatus, SwitchStatus, FutureStatus
+from Database.create_database import Base, TrainStatus, SwitchStatus, TrainOrders
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import sqlalchemy.orm.exc as sqlerror
@@ -41,7 +41,7 @@ for switch in switched:
 
 print("*"*25)
 print("CURRENT STATUS")
-train = db_access.query(CurrentStatus).all()
+train = db_access.query(TrainStatus).all()
 for section in train:
     print("Train section ID: {}".format(section.identification))
     print("Current location: {}".format(section.location))
@@ -50,7 +50,7 @@ for section in train:
 
 print("*"*25)
 print("ORDERS")
-orders = db_access.query(FutureStatus).one()
+orders = db_access.query(TrainOrders).one()
 print("Ordered car: {}".format(orders.who))
 print("Ordered location: {}".format(orders.where))
 # print(orders.how)
@@ -61,7 +61,7 @@ print("Ordered speed: {}".format(orders.speed_request))
 
 print("*"*25)
 print("CURRENT STATUS AFTER MOVE")
-train = db_access.query(CurrentStatus).all()
+train = db_access.query(TrainStatus).all()
 for section in train:
     print("Train section ID: {}".format(section.identification))
     print("Current location: {}".format(section.location))
@@ -71,7 +71,7 @@ for section in train:
 print("*"*25)
 print("ORDERS AFTER MOVE")
 try:
-    orders = db_access.query(FutureStatus).one()
+    orders = db_access.query(TrainOrders).one()
 except sqlerror.NoResultFound:
     pass
 

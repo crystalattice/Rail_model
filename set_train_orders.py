@@ -53,7 +53,7 @@ def access_db(path):
     return session
 
 
-def create_orders(vehicle, destination, cargo, turbo, speed, session):
+def create_orders(session, vehicle, destination, cargo="N/A", turbo=False, speed=30):
     """Stage updates to database based on user input."""
     route_time = get_route(vehicle, destination, session)
     move_car = session.query(TrainOrders).first()

@@ -1,8 +1,9 @@
 import pytest
 
-from Database.create_database import StationStatus
-
 import set_train_orders
+import set_station
+
+from Database.create_database import StationStatus
 
 
 def test_station(transportation_db):
@@ -32,3 +33,12 @@ def test_station_int(transportation_db):
     with pytest.raises(TypeError):
         set_train_orders.create_orders(vehicle="Engine", destination=2, cargo="N/A", turbo=False, speed=30,
                                        session=transportation_db)
+
+
+def test_station_update(transportation_db):
+    """Test station updates."""
+    set_station.update_station(session=transportation_db, station_id="Station 1", status=False, speed=30, empty=False)
+    get_station = transportation_db.query(StationStatus).filter(StationStatus.station_id == "Station 1").one()
+    assert get_station.station_status == False
+    assert get_station.speed_restriction == 30
+    assert get_station.track_status == False

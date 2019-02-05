@@ -1,7 +1,7 @@
 import pytest
 
 from sqlalchemy.orm.exc import NoResultFound
-from Database.create_database import TrainOrders, TrainStatus, StationStatus
+from Database.create_database import TrainOrders, TrainStatus
 
 import set_train_orders
 

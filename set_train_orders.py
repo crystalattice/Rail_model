@@ -20,7 +20,7 @@ from time import sleep
 import sys
 sys.path.extend(["/home/cody/PycharmProjects/Transportation_model"])
 
-import station_mapping
+from Utilities import station_mapping
 from Database.create_database import Base, TrainStatus, TrainOrders
 
 from sqlalchemy import create_engine
@@ -95,7 +95,6 @@ def match_speeds(session, orders):
     """Match the current speed to the ordered speed."""
     car_status = session.query(TrainStatus).filter(TrainStatus.identification == orders.who).one()
     car_status.speed = orders.speed_request
-    print(car_status.speed)
 
     session.add(car_status)
     session.commit()

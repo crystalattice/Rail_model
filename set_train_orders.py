@@ -58,10 +58,10 @@ def create_orders(vehicle, destination, cargo, turbo, speed, session):
     route_time = get_route(vehicle, destination, session)
     move_car = session.query(TrainOrders).first()
     move_car.who = vehicle
-    move_car.where = destination
-    move_car.what = cargo
+    move_car.where_to = destination
+    move_car.cargo = cargo
     move_car.how = ""
-    move_car.when = route_time
+    move_car.estimated_time = route_time
     move_car.priority = turbo
     move_car.speed_request = speed
 
@@ -104,7 +104,7 @@ def match_speeds(session, orders):
 def update_curr_location(session, orders):
     """After waiting for a period of time, update the current location based on orders."""
     new_status = session.query(TrainStatus).filter(TrainStatus.identification == orders.who).one()
-    new_status.location = orders.where
+    new_status.location = orders.where_to
     new_status.speed = 0
 
     session.add(new_status)

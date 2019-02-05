@@ -103,7 +103,8 @@ def initial_db_fill(session):
     car3 = TrainStatus(identification="Car 3", location="Station 4", speed=0, car_status=True)
 
     # Orders
-    train_section = TrainOrders(who="", where="", how="", when=0, what="", priority=False)
+    train_section = TrainOrders(who="", where_to="", how="", estimated_time=0, cargo="", priority=False,
+                                speed_request=0)
 
     # Stations
     station_1 = StationStatus(station_id="Station 1", station_status=True, speed_restriction=10, track_status=True)
@@ -113,6 +114,7 @@ def initial_db_fill(session):
 
     items = (sw_1a, sw_1b, sw_2a, sw_2b, sw_3a, sw_3b, sw_4a, sw_4b, train_engine, car1, car2, car3, train_section,
              station_1, station_2, station_3, station_4)
+    # items = (sw_1a, sw_1b, sw_2a, sw_2b, sw_3a, sw_3b, sw_4a, sw_4b, train_engine, car1, car2, car3, train_section)
 
     session.add_all(items)
     session.commit()

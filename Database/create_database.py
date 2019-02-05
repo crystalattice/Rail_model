@@ -13,6 +13,8 @@ Author: Cody Jackson
 
 Date: 1/9/19
 ################################
+Version 0.3
+    Added station status table
 Version 0.2
     Added orders speed request
 Version 0.1
@@ -27,7 +29,7 @@ from sqlalchemy.orm import sessionmaker
 Base = declarative_base()
 
 
-class CurrentStatus(Base):
+class TrainStatus(Base):
     """Table for tracking the current data of transportation vehicle"""
     __tablename__ = "current"
     id = Column(Integer, primary_key=True)
@@ -46,19 +48,27 @@ class SwitchStatus(Base):
     switch_position = Column(Boolean, nullable=False)  # Straight = True, Switched = False
 
 
-class FutureStatus(Base):
+class TrainOrders(Base):
     """Table to hold user orders of transportation changes"""
     __tablename__ = "orders"
     id = Column(Integer, primary_key=True)
     who = Column(String(length=250), nullable=False)  # Engine or car number
-    where = Column(String(length=50), nullable=False)  # Station number
+    where_to = Column(String(length=50), nullable=False)  # Station number
     how = Column(String)  # Route
-    when = Column(Integer, nullable=False)  # ETA
-    what = Column(String(length=250))  # Cargo description
+    estimated_time = Column(Integer, nullable=False)  # ETA
+    cargo = Column(String(length=250))  # Cargo description
     priority = Column(Boolean)  # High priority = True, normal priority = False
     speed_request = Column(Integer)  # Requested speed to the train
 
-# TODO: account for speed restrictions on track
+
+class StationStatus(Base):
+    """Table for station conditions."""
+    __tablename__ = "stations"
+    id = Column(Integer, primary_key=True)
+    station_id = Column(String(length=250), nullable=False)
+    station_status = Column(Boolean, nullable=False)  # Operational = True, Shutdown = False
+    speed_restriction = Column(Integer, nullable=False)  # Station speed limit
+    track_status = Column(Boolean, nullable=False)  # Station available = True, Station occupied = False
 
 
 def create_db(path):
@@ -77,25 +87,32 @@ def create_db(path):
 def initial_db_fill(session):
     """Populates the newly created database with initial system data."""
     # Switches
-    _1a = SwitchStatus(switch_name="1a", switch_status=True, switch_position=True)
-    _1b = SwitchStatus(switch_name="1b", switch_status=True, switch_position=True)
-    _2a = SwitchStatus(switch_name="2a", switch_status=True, switch_position=True)
-    _2b = SwitchStatus(switch_name="2b", switch_status=True, switch_position=True)
-    _3a = SwitchStatus(switch_name="3a", switch_status=True, switch_position=True)
-    _3b = SwitchStatus(switch_name="3b", switch_status=True, switch_position=True)
-    _4a = SwitchStatus(switch_name="4a", switch_status=True, switch_position=True)
-    _4b = SwitchStatus(switch_name="4b", switch_status=True, switch_position=True)
+    sw_1a = SwitchStatus(switch_name="1a", switch_status=True, switch_position=True)
+    sw_1b = SwitchStatus(switch_name="1b", switch_status=True, switch_position=True)
+    sw_2a = SwitchStatus(switch_name="2a", switch_status=True, switch_position=True)
+    sw_2b = SwitchStatus(switch_name="2b", switch_status=True, switch_position=True)
+    sw_3a = SwitchStatus(switch_name="3a", switch_status=True, switch_position=True)
+    sw_3b = SwitchStatus(switch_name="3b", switch_status=True, switch_position=True)
+    sw_4a = SwitchStatus(switch_name="4a", switch_status=True, switch_position=True)
+    sw_4b = SwitchStatus(switch_name="4b", switch_status=True, switch_position=True)
 
     # Train location
-    train_engine = CurrentStatus(identification="Engine", location="Station 1", speed=0, car_status=True)
-    car1 = CurrentStatus(identification="Car 1", location="Station 2", speed=0, car_status=True)
-    car2 = CurrentStatus(identification="Car 2", location="Station 3", speed=0, car_status=True)
-    car3 = CurrentStatus(identification="Car 3", location="Station 4", speed=0, car_status=True)
+    train_engine = TrainStatus(identification="Engine", location="Station 1", speed=0, car_status=True)
+    car1 = TrainStatus(identification="Car 1", location="Station 2", speed=0, car_status=True)
+    car2 = TrainStatus(identification="Car 2", location="Station 3", speed=0, car_status=True)
+    car3 = TrainStatus(identification="Car 3", location="Station 4", speed=0, car_status=True)
 
     # Orders
-    train_section = FutureStatus(who="", where="", how="", when=0, what="", priority=False)
+    train_section = TrainOrders(who="", where="", how="", when=0, what="", priority=False)
 
-    items = (_1a, _1b, _2a, _2b, _3a, _3b, _4a, _4b, train_engine, car1, car2, car3, train_section)
+    # Stations
+    station_1 = StationStatus(station_id="Station 1", station_status=True, speed_restriction=10, track_status=True)
+    station_2 = StationStatus(station_id="Station 2", station_status=True, speed_restriction=10, track_status=True)
+    station_3 = StationStatus(station_id="Station 3", station_status=True, speed_restriction=10, track_status=True)
+    station_4 = StationStatus(station_id="Station 4", station_status=True, speed_restriction=10, track_status=True)
+
+    items = (sw_1a, sw_1b, sw_2a, sw_2b, sw_3a, sw_3b, sw_4a, sw_4b, train_engine, car1, car2, car3, train_section,
+             station_1, station_2, station_3, station_4)
 
     session.add_all(items)
     session.commit()

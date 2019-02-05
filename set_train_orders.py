@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-set_orders.py
+set_train_orders.py
 
 Purpose: Takes user input and updates the database accordingly
 
@@ -21,7 +21,7 @@ import sys
 sys.path.extend(["/home/cody/PycharmProjects/Transportation_model"])
 
 import station_mapping
-from Database.create_database import Base, CurrentStatus, FutureStatus
+from Database.create_database import Base, TrainStatus, TrainOrders
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -56,7 +56,7 @@ def access_db(path):
 def create_orders(vehicle, destination, cargo, turbo, speed, session):
     """Stage updates to database based on user input."""
     route_time = get_route(vehicle, destination, session)
-    move_car = session.query(FutureStatus).first()
+    move_car = session.query(TrainOrders).first()
     move_car.who = vehicle
     move_car.where = destination
     move_car.what = cargo
@@ -70,7 +70,7 @@ def create_orders(vehicle, destination, cargo, turbo, speed, session):
 
 def get_curr_location(vehicle, session):
     """Determine the current location of the desired train car."""
-    selected_car = session.query(CurrentStatus).filter(CurrentStatus.identification == vehicle).one()
+    selected_car = session.query(TrainStatus).filter(TrainStatus.identification == vehicle).one()
     curr_loc = selected_car.location
 
     return curr_loc
@@ -93,7 +93,7 @@ def commit_session(session, movement):
 
 def match_speeds(session, orders):
     """Match the current speed to the ordered speed."""
-    car_status = session.query(CurrentStatus).filter(CurrentStatus.identification == orders.who).one()
+    car_status = session.query(TrainStatus).filter(TrainStatus.identification == orders.who).one()
     car_status.speed = orders.speed_request
     print(car_status.speed)
 
@@ -103,7 +103,7 @@ def match_speeds(session, orders):
 
 def update_curr_location(session, orders):
     """After waiting for a period of time, update the current location based on orders."""
-    new_status = session.query(CurrentStatus).filter(CurrentStatus.identification == orders.who).one()
+    new_status = session.query(TrainStatus).filter(TrainStatus.identification == orders.who).one()
     new_status.location = orders.where
     new_status.speed = 0
 
@@ -113,7 +113,7 @@ def update_curr_location(session, orders):
 
 def clear_orders(session):
     """Clear entries from FutureStatus table."""
-    orders = session.query(FutureStatus).first()
+    orders = session.query(TrainOrders).first()
     session.delete(orders)
     session.commit()
 

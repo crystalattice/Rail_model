@@ -1,6 +1,6 @@
 import pytest
 from sqlalchemy.orm.exc import NoResultFound
-from Database.create_database import TrainOrders, TrainStatus
+from Database.create_database import TrainOrders, TrainStatus, StationStatus
 from Database import create_database
 import set_train_orders
 
@@ -16,6 +16,14 @@ def transportation_db(tmpdir):
     set_train_orders.close_session(sess)
 
 
+def test_station(transportation_db):
+    """Test that a station is set up properly."""
+    check_station = transportation_db.query(StationStatus).filter(StationStatus.station_id == "Station 1").one()
+    assert check_station.station_status == True
+    assert check_station.speed_restriction == 10
+    assert check_station.track_status == True
+
+
 def test_engine_sta3(transportation_db):
     """Test Engine to valid station."""
     set_train_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False, speed=30,
@@ -23,7 +31,7 @@ def test_engine_sta3(transportation_db):
 
     orders = transportation_db.query(TrainOrders).one()
     assert orders.who == "Engine"
-    assert orders.where == "Station 3"
+    assert orders.where_to == "Station 3"
 
 
 def test_car1_sta4(transportation_db):
@@ -33,8 +41,8 @@ def test_car1_sta4(transportation_db):
 
     orders = transportation_db.query(TrainOrders).one()
     assert orders.who == "Car 1"
-    assert orders.where == "Station 4"
-    assert orders.what == "Denim"
+    assert orders.where_to == "Station 4"
+    assert orders.cargo == "Denim"
 
 
 def test_invalid_car(transportation_db):
@@ -78,7 +86,7 @@ def test_cargo_int(transportation_db):
                                    session=transportation_db)
 
     orders = transportation_db.query(TrainOrders).one()
-    assert orders.what == "8"
+    assert orders.cargo == "8"
 
 
 def test_engine_turbo(transportation_db):
@@ -88,15 +96,15 @@ def test_engine_turbo(transportation_db):
 
     orders = transportation_db.query(TrainOrders).one()
     assert orders.who == "Engine"
-    assert orders.where == "Station 3"
+    assert orders.where_to == "Station 3"
     assert orders.priority == True
     assert orders.speed_request == 50
 
 
 def test_match_speeds(transportation_db):
     """Test current speed matches ordered speed."""
-    new_orders = set_train_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False, speed=45,
-                                                session=transportation_db)
+    new_orders = set_train_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False,
+                                                speed=45, session=transportation_db)
     set_train_orders.match_speeds(transportation_db, new_orders)
     new_speed = transportation_db.query(TrainStatus).filter(TrainStatus.identification == new_orders.who).one()
     assert new_speed.speed == 45
@@ -104,8 +112,8 @@ def test_match_speeds(transportation_db):
 
 def test_current_status_update(transportation_db):
     """Test CurrentStatus table is updated to new status after transportation orders made."""
-    new_orders = set_train_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False, speed=30,
-                                                session=transportation_db)
+    new_orders = set_train_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False,
+                                                speed=30, session=transportation_db)
     set_train_orders.update_curr_location(transportation_db, new_orders)
     new_status = transportation_db.query(TrainStatus).filter(TrainStatus.identification == new_orders.who).one()
     assert new_status.identification == "Engine"
@@ -114,8 +122,8 @@ def test_current_status_update(transportation_db):
 
 def test_orders_status_cleared(transportation_db):
     """Test that future orders table is cleared after move performed."""
-    new_orders = set_train_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False, speed=30,
-                                                session=transportation_db)
+    new_orders = set_train_orders.create_orders(vehicle="Engine", destination="Station 3", cargo="N/A", turbo=False,
+                                                speed=30, session=transportation_db)
 
     set_train_orders.update_curr_location(transportation_db, new_orders)
     set_train_orders.clear_orders(transportation_db)

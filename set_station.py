@@ -13,12 +13,11 @@ Version 0.1
 """
 
 import argparse
-from time import sleep
 
 import sys
 sys.path.extend(["/home/cody/PycharmProjects/Transportation_model"])
 
-from Database.create_database import Base, StationStatus
+from database.create_database import Base, StationStatus
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker

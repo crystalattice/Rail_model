@@ -13,7 +13,6 @@ Version 0.1
 """
 
 import argparse
-from time import sleep
 
 import sys
 sys.path.extend(["/home/cody/PycharmProjects/Transportation_model"])

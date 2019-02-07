@@ -13,6 +13,8 @@ Author: Cody Jackson
 
 Date: 1/9/19
 ################################
+Version 0.4
+    Set default table creation values
 Version 0.3
     Added station status table
 Version 0.2
@@ -35,8 +37,8 @@ class TrainStatus(Base):
     id = Column(Integer, primary_key=True)
     identification = Column(String(length=250), nullable=False)  # Engine or car number
     location = Column(String(length=50), nullable=False)  # Station or RFID tag
-    speed = Column(Integer, nullable=False)  # Scaled to real world
-    car_status = Column(Boolean, nullable=False)  # Operational = True, Broken = False
+    speed = Column(Integer, nullable=False, default=0)  # Scaled to real world
+    car_status = Column(Boolean, nullable=False, default=True)  # Operational = True, Broken = False
 
 
 class SwitchStatus(Base):
@@ -44,8 +46,8 @@ class SwitchStatus(Base):
     __tablename__ = "switches"
     id = Column(Integer, primary_key=True)
     switch_name = Column(String(length=50), nullable=False)
-    switch_status = Column(Boolean, nullable=False)  # Operational = True, Broken = False
-    switch_position = Column(Boolean, nullable=False)  # Straight = True, Switched = False
+    switch_status = Column(Boolean, nullable=False, default=True)  # Operational = True, Broken = False
+    switch_position = Column(Boolean, nullable=False, default=True)  # Straight = True, Switched = False
 
 
 class TrainOrders(Base):
@@ -66,9 +68,9 @@ class StationStatus(Base):
     __tablename__ = "stations"
     id = Column(Integer, primary_key=True)
     station_id = Column(String(length=250), nullable=False)
-    station_status = Column(Boolean, nullable=False)  # Operational = True, Shutdown = False
-    speed_restriction = Column(Integer, nullable=False)  # Station speed limit
-    track_status = Column(Boolean, nullable=False)  # Station available = True, Station occupied = False
+    station_status = Column(Boolean, nullable=False, default=True)  # Operational = True, Shutdown = False
+    speed_restriction = Column(Integer, nullable=False, default=10)  # Station speed limit
+    track_status = Column(Boolean, nullable=False, default=True)  # Station available = True, Station occupied = False
 
 
 def create_db(path):
@@ -87,34 +89,33 @@ def create_db(path):
 def initial_db_fill(session):
     """Populates the newly created database with initial system data."""
     # Switches
-    sw_1a = SwitchStatus(switch_name="1a", switch_status=True, switch_position=True)
-    sw_1b = SwitchStatus(switch_name="1b", switch_status=True, switch_position=True)
-    sw_2a = SwitchStatus(switch_name="2a", switch_status=True, switch_position=True)
-    sw_2b = SwitchStatus(switch_name="2b", switch_status=True, switch_position=True)
-    sw_3a = SwitchStatus(switch_name="3a", switch_status=True, switch_position=True)
-    sw_3b = SwitchStatus(switch_name="3b", switch_status=True, switch_position=True)
-    sw_4a = SwitchStatus(switch_name="4a", switch_status=True, switch_position=True)
-    sw_4b = SwitchStatus(switch_name="4b", switch_status=True, switch_position=True)
+    sw_1a = SwitchStatus(switch_name="1a")
+    sw_1b = SwitchStatus(switch_name="1b")
+    sw_2a = SwitchStatus(switch_name="2a")
+    sw_2b = SwitchStatus(switch_name="2b")
+    sw_3a = SwitchStatus(switch_name="3a")
+    sw_3b = SwitchStatus(switch_name="3b")
+    sw_4a = SwitchStatus(switch_name="4a")
+    sw_4b = SwitchStatus(switch_name="4b")
 
     # Train location
-    train_engine = TrainStatus(identification="Engine", location="Station 1", speed=0, car_status=True)
-    car1 = TrainStatus(identification="Car 1", location="Station 2", speed=0, car_status=True)
-    car2 = TrainStatus(identification="Car 2", location="Station 3", speed=0, car_status=True)
-    car3 = TrainStatus(identification="Car 3", location="Station 4", speed=0, car_status=True)
+    train_engine = TrainStatus(identification="Engine", location="Station 1")
+    car1 = TrainStatus(identification="Car 1", location="Station 2")
+    car2 = TrainStatus(identification="Car 2", location="Station 3")
+    car3 = TrainStatus(identification="Car 3", location="Station 4")
 
     # Orders
     train_section = TrainOrders(who="", where_to="", how="", estimated_time=0, cargo="", priority=False,
                                 speed_request=0)
 
     # Stations
-    station_1 = StationStatus(station_id="Station 1", station_status=True, speed_restriction=10, track_status=True)
-    station_2 = StationStatus(station_id="Station 2", station_status=True, speed_restriction=10, track_status=True)
-    station_3 = StationStatus(station_id="Station 3", station_status=True, speed_restriction=10, track_status=True)
-    station_4 = StationStatus(station_id="Station 4", station_status=True, speed_restriction=10, track_status=True)
+    station_1 = StationStatus(station_id="Station 1")
+    station_2 = StationStatus(station_id="Station 2")
+    station_3 = StationStatus(station_id="Station 3")
+    station_4 = StationStatus(station_id="Station 4")
 
     items = (sw_1a, sw_1b, sw_2a, sw_2b, sw_3a, sw_3b, sw_4a, sw_4b, train_engine, car1, car2, car3, train_section,
              station_1, station_2, station_3, station_4)
-    # items = (sw_1a, sw_1b, sw_2a, sw_2b, sw_3a, sw_3b, sw_4a, sw_4b, train_engine, car1, car2, car3, train_section)
 
     session.add_all(items)
     session.commit()

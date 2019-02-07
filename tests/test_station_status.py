@@ -3,7 +3,7 @@ import pytest
 import set_train_orders
 import set_station
 
-from Database.create_database import StationStatus
+from database.create_database import StationStatus
 
 
 def test_station(transportation_db):

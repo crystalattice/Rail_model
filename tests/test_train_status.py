@@ -1,9 +1,9 @@
 import pytest
 
+import set_train_orders
+
 from sqlalchemy.orm.exc import NoResultFound
 from database.create_database import TrainOrders, TrainStatus
-
-import set_train_orders
 
 
 def test_engine_sta3(transportation_db):
@@ -58,7 +58,7 @@ def test_engine_turbo(transportation_db):
     orders = transportation_db.query(TrainOrders).one()
     assert orders.who == "Engine"
     assert orders.where_to == "Station 3"
-    assert orders.priority == True
+    assert orders.priority is True
     assert orders.speed_request == 50
 
 

@@ -14,7 +14,7 @@ Version 0.1
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from Database.create_database import SwitchStatus
+from database.create_database import SwitchStatus
 
 
 def get_route_info(routing, sess):

@@ -24,6 +24,8 @@ Version 0.1
 """
 import os
 
+from station_utils import station_switches
+
 from sqlalchemy import Column, Integer, String, Boolean, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -89,14 +91,27 @@ def create_db(path):
 def initial_db_fill(session):
     """Populates the newly created database with initial system data."""
     # Switches
-    sw_1a = SwitchStatus(switch_name="1a")
-    sw_1b = SwitchStatus(switch_name="1b")
-    sw_2a = SwitchStatus(switch_name="2a")
-    sw_2b = SwitchStatus(switch_name="2b")
-    sw_3a = SwitchStatus(switch_name="3a")
-    sw_3b = SwitchStatus(switch_name="3b")
-    sw_4a = SwitchStatus(switch_name="4a")
-    sw_4b = SwitchStatus(switch_name="4b")
+    switches = station_switches.switch_gen()
+    sw_1a = SwitchStatus(switch_name=switches[0])
+    sw_1b = SwitchStatus(switch_name=switches[1])
+    sw_2a = SwitchStatus(switch_name=switches[2])
+    sw_2b = SwitchStatus(switch_name=switches[3])
+    sw_3a = SwitchStatus(switch_name=switches[4])
+    sw_3b = SwitchStatus(switch_name=switches[5])
+    sw_4a = SwitchStatus(switch_name=switches[6])
+    sw_4b = SwitchStatus(switch_name=switches[7])
+    sw_5a = SwitchStatus(switch_name=switches[8])
+    sw_5b = SwitchStatus(switch_name=switches[9])
+    sw_6a = SwitchStatus(switch_name=switches[10])
+    sw_6b = SwitchStatus(switch_name=switches[11])
+    sw_7a = SwitchStatus(switch_name=switches[12])
+    sw_7b = SwitchStatus(switch_name=switches[13])
+    sw_8a = SwitchStatus(switch_name=switches[14])
+    sw_8b = SwitchStatus(switch_name=switches[15])
+    sw_9a = SwitchStatus(switch_name=switches[16])
+    sw_9b = SwitchStatus(switch_name=switches[17])
+    sw_10a = SwitchStatus(switch_name=switches[18])
+    sw_10b = SwitchStatus(switch_name=switches[19])
 
     # Train location
     train_engine = TrainStatus(identification="Engine", location="Station 1")
@@ -114,7 +129,8 @@ def initial_db_fill(session):
     station_3 = StationStatus(station_id="Station 3")
     station_4 = StationStatus(station_id="Station 4")
 
-    items = (sw_1a, sw_1b, sw_2a, sw_2b, sw_3a, sw_3b, sw_4a, sw_4b, train_engine, car1, car2, car3, train_section,
+    items = (sw_1a, sw_1b, sw_2a, sw_2b, sw_3a, sw_3b, sw_4a, sw_4b, sw_5a, sw_5b, sw_6a, sw_6b, sw_7a, sw_7b,
+             sw_8a, sw_8b, sw_9a, sw_9b, sw_10a, sw_10b, train_engine, car1, car2, car3, train_section,
              station_1, station_2, station_3, station_4)
 
     session.add_all(items)

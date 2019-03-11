@@ -17,7 +17,7 @@ import argparse
 import sys
 sys.path.extend(["/home/cody/PycharmProjects/Transportation_model"])
 
-from database.create_database import Base, StationStatus
+from archive.database import Base, StationStatus
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker

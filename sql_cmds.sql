@@ -33,6 +33,12 @@ create table StationStatus(
     primary key (station_name)
 );
 
+create table RFID(
+    uid varchar(50) not null,
+    description varchar(250),
+    primary key (uid)
+);
+
 truncate table TrainStatus;
 partition table TrainStatus on column car_id;
 
@@ -44,6 +50,9 @@ partition table TrainOrders on column orders_id;
 
 truncate table StationStatus;
 partition table StationStatus on column station_name;
+
+truncate table RFID;
+partition table RFID on column uid;
 
 create procedure Insert_Switches
     partition on table SwitchStatus column switch_name
@@ -78,3 +87,11 @@ create procedure Insert_Stations
 create procedure Select_Stations
     partition on table StationStatus column station_name
         as select station_status, station_speed, station_avail from StationStatus where station_name= ?;
+
+create procedure Insert_RFID
+    partition on table RFID colunmn uid
+        as insert into RFID (uid, description) values (?, ?);
+
+create procedure Select_RFID
+    partition on table RFID column uid
+        as select description from RFID where uid = ?;

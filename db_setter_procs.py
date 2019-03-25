@@ -20,3 +20,5 @@ set_stations_proc = VoltProcedure(client, "Insert_Stations", [FastSerializer.VOL
                                                               FastSerializer.VOLTTYPE_STRING,
                                                               FastSerializer.VOLTTYPE_INTEGER,
                                                               FastSerializer.VOLTTYPE_STRING])
+set_rfid_proc = VoltProcedure(client, "Insert_RFID", [FastSerializer.VOLTTYPE_STRING,
+                                                      FastSerializer.VOLTTYPE_STRING])

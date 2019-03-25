@@ -24,4 +24,3 @@ if __name__ == "__main__":
     set_stations_proc.call(["Station 2", "True", 10, "True"])
     set_stations_proc.call(["Station 3", "True", 10, "True"])
     set_stations_proc.call(["Station 4", "True", 10, "True"])
-

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-set_orders.py
+set_train_orders.py
 
 Purpose: Takes user input and updates the database accordingly
 
@@ -8,6 +8,8 @@ Author: Cody Jackson
 
 Date: 1/15/19
 ################################
+Version 0.2
+    Added orders speed request
 Version 0.1
     Initial build
 """
@@ -18,8 +20,8 @@ from time import sleep
 import sys
 sys.path.extend(["/home/cody/PycharmProjects/Transportation_model"])
 
-from Database import station_mapping
-from Database.create_database import Base, CurrentStatus, FutureStatus
+from archive.station_utils import station_mapping
+from archive.database import Base, TrainStatus, TrainOrders
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -33,6 +35,7 @@ def arg_parser():
     parser.add_argument("where", help="Destination station. Option: 'Station 1', 'Station 2', 'Station 3, 'Station 4'")
     parser.add_argument("--what", default="N/A", type=str, help="Cargo description")
     parser.add_argument("--priority", default=False, type=bool, help="Rush delivery. Default = False")
+    parser.add_argument("--req_speed", default=30, type=int, help="Requested speed of the train.")
     var_args = vars(parser.parse_args())
 
     return var_args
@@ -50,23 +53,24 @@ def access_db(path):
     return session
 
 
-def create_orders(vehicle, destination, cargo, turbo, session):
+def create_orders(session, vehicle, destination, cargo="N/A", turbo=False, speed=30):
     """Stage updates to database based on user input."""
     route_time = get_route(vehicle, destination, session)
-    move_car = session.query(FutureStatus).first()
+    move_car = session.query(TrainOrders).first()
     move_car.who = vehicle
-    move_car.where = destination
-    move_car.what = cargo
+    move_car.where_to = destination
+    move_car.cargo = cargo
     move_car.how = ""
-    move_car.when = route_time
+    move_car.estimated_time = route_time
     move_car.priority = turbo
+    move_car.speed_request = speed
 
     return move_car
 
 
 def get_curr_location(vehicle, session):
     """Determine the current location of the desired train car."""
-    selected_car = session.query(CurrentStatus).filter(CurrentStatus.identification == vehicle).one()
+    selected_car = session.query(TrainStatus).filter(TrainStatus.identification == vehicle).one()
     curr_loc = selected_car.location
 
     return curr_loc
@@ -87,10 +91,20 @@ def commit_session(session, movement):
     session.commit()
 
 
+def match_speeds(session, orders):
+    """Match the current speed to the ordered speed."""
+    car_status = session.query(TrainStatus).filter(TrainStatus.identification == orders.who).one()
+    car_status.speed = orders.speed_request
+
+    session.add(car_status)
+    session.commit()
+
+
 def update_curr_location(session, orders):
     """After waiting for a period of time, update the current location based on orders."""
-    new_status = session.query(CurrentStatus).filter(CurrentStatus.identification == orders.who).one()
-    new_status.location = orders.where
+    new_status = session.query(TrainStatus).filter(TrainStatus.identification == orders.who).one()
+    new_status.location = orders.where_to
+    new_status.speed = 0
 
     session.add(new_status)
     session.commit()
@@ -98,7 +112,7 @@ def update_curr_location(session, orders):
 
 def clear_orders(session):
     """Clear entries from FutureStatus table."""
-    orders = session.query(FutureStatus).first()
+    orders = session.query(TrainOrders).first()
     session.delete(orders)
     session.commit()
 
@@ -115,9 +129,11 @@ if __name__ == "__main__":
     where = user_args["where"]
     what = user_args["what"]
     priority = user_args["priority"]
+    req_speed = user_args["req_speed"]
 
     db_access = access_db(db_path)
-    move_train = create_orders(who, where, what, priority, db_access)
+    move_train = create_orders(who, where, what, priority, req_speed, db_access)
+    match_speeds(db_access, move_train)
     sleep(5)
     update_curr_location(db_access, move_train)
 

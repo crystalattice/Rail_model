@@ -60,7 +60,7 @@ create procedure Insert_Switches
 
 create procedure Select_Switches
     partition on table SwitchStatus column switch_name
-        as select switch_status, switch_position from SwitchStatus where switch_name = ?;
+        as select switch_name, switch_status, switch_position from SwitchStatus where switch_name = ?;
 
 create procedure Insert_Trains
     partition on table TrainStatus column car_id
@@ -68,7 +68,7 @@ create procedure Insert_Trains
 
 create procedure Select_Trains
     partition on table TrainStatus column car_id
-        as select car_location, car_speed, car_status from TrainStatus where car_id = ?;
+        as select car_id, car_location, car_speed, car_status from TrainStatus where car_id = ?;
 
 create procedure Insert_Orders
     partition on table TrainOrders column orders_id
@@ -86,12 +86,20 @@ create procedure Insert_Stations
 
 create procedure Select_Stations
     partition on table StationStatus column station_name
-        as select station_status, station_speed, station_avail from StationStatus where station_name= ?;
+        as select station_name, station_status, station_speed, station_avail from StationStatus where station_name= ?;
 
 create procedure Insert_RFID
-    partition on table RFID colunmn uid
+    partition on table RFID column uid
         as insert into RFID (uid, description) values (?, ?);
 
 create procedure Select_RFID
     partition on table RFID column uid
         as select description from RFID where uid = ?;
+
+create procedure Delete_Train
+    partition on table TrainStatus column car_id
+        as delete from TrainStatus where car_id = ?;
+
+create procedure Update_Speed
+    partition on table TrainStatus column car_id
+        as update TrainStatus set car_speed = ? where car_id = ?;

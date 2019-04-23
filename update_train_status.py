@@ -30,3 +30,7 @@ if __name__ == "__main__":
     print("*" * 8)
     print("Car 3")
     print(get_trains_proc.call(["Car 3"]))
+
+    # Get just the speed of car 3
+    car3 = str(get_trains_proc.call(["Car 3"]))
+    print(car3[-10:-9])

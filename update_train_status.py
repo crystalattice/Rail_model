@@ -7,7 +7,7 @@ from voltdbclient import *
 client = FastSerializer("localhost", 21212)
 
 
-def update_train_status(car="Engine", new_location="Station 1", new_speed, new_status=True):
+def update_train_status(new_speed, car="Engine", new_location="Station 1", new_status=True):
     del_train_row.del_train(car)
     set_trains_proc.call([car, new_location, new_speed, new_status])
 

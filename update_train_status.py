@@ -1,7 +1,6 @@
 # from db_setter_procs import set_speed_proc
 from db_setter_procs import set_trains_proc
 import del_train_row
-from db_getter_procs import get_trains_proc
 from voltdbclient import *
 
 client = FastSerializer("localhost", 21212)
